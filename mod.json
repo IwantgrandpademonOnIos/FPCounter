@@ -1,0 +1,75 @@
+{
+    "geode": "5.6.1",
+    "gd": {
+        "win": "2.2081",
+        "mac": "2.2081",
+        "android": "2.2081",
+        "ios": "2.2081"
+    },
+    "id": "ssmg4.fp-counter",
+    "name": "FP Counter",
+    "version": "v1.0.0",
+    "developer": "SSMG4",
+    "description": "Detects genuine frame-perfect inputs as you play, plays a sound, flashes the screen, and keeps a running count. Also scans your recorded clears for every frame perfect on that run and the FPS each one needs.",
+    "repository": "https://github.com/SSMG4/FPCounter",
+    "tags": ["gameplay", "interface", "utility"],
+    "settings": {
+        "counter-enabled": {
+            "name": "Show On-Screen Counter",
+            "description": "Shows a running count of frame perfects performed this attempt in the top-right corner.",
+            "type": "bool",
+            "default": true
+        },
+        "flash-enabled": {
+            "name": "Flash Screen on Frame Perfect",
+            "description": "Briefly tints the screen a color every time a frame perfect is detected.",
+            "type": "bool",
+            "default": true
+        },
+        "flash-color": {
+            "name": "Flash Color",
+            "description": "Color used for the frame-perfect screen flash.",
+            "type": "rgb",
+            "default": { "r": 0, "g": 255, "b": 0 }
+        },
+        "flash-duration": {
+            "name": "Flash Duration (seconds)",
+            "description": "How long the flash takes to fade out.",
+            "type": "float",
+            "default": 0.18,
+            "min": 0.05,
+            "max": 1.0
+        },
+        "sound-enabled": {
+            "name": "Play Sound on Frame Perfect",
+            "description": "Plays a sound effect every time a frame perfect is detected.",
+            "type": "bool",
+            "default": true
+        },
+        "sound-file": {
+            "name": "Frame Perfect Sound",
+            "description": "Sound file played on each detected frame perfect. Pick any .mp3/.wav/.ogg from your device.",
+            "type": "file",
+            "default": "",
+            "control": {
+                "dialog": "open",
+                "filters": [
+                    { "files": ["*.mp3", "*.wav", "*.ogg"], "description": "Audio files" }
+                ]
+            }
+        },
+        "sensitivity-title": {
+            "name": "Detection",
+            "type": "title"
+        },
+        "max-fps-target": {
+            "name": "Loosest FPS Still Counted",
+            "description": "An input only counts as a frame perfect if it would still be frame perfect at this FPS or higher. 60 matches the community baseline ('60fps frame perfect'). Lower this to only catch tighter, rarer inputs (120/240fps perfects); raise it to catch more borderline ones.",
+            "type": "int",
+            "default": 60,
+            "min": 30,
+            "max": 240,
+            "control": { "slider": true }
+        }
+    }
+}

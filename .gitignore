@@ -1,0 +1,36 @@
+# Build output
+build/
+build-*/
+bin/
+out/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+
+# Compiled objects
+*.o
+*.obj
+*.exe
+*.dll
+*.dylib
+*.so
+*.pdb
+*.ilk
+*.exp
+*.lib
+
+# Geode
+bindings/
+*.geode
+
+# Editors / IDEs
+.vs/
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
