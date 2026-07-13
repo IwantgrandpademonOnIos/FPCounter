@@ -8,7 +8,7 @@
     },
     "id": "ssmg4.fp-counter",
     "name": "FP Counter",
-    "version": "v1.0.0",
+    "version": "v1.1.0",
     "developer": "SSMG4",
     "description": "Detects genuine frame-perfect inputs as you play, plays a sound, flashes the screen, and keeps a running count. Also scans your recorded clears for every frame perfect on that run and the FPS each one needs.",
     "repository": "https://github.com/SSMG4/FPCounter",

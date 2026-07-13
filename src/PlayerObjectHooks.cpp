@@ -20,16 +20,16 @@ namespace {
     }
 }
 
-class $modify(FPCPlayerObject, PlayerObject){
-    bool pushButton(PlayerButton button){bool result = PlayerObject::pushButton(button);
-handleInput(this);
-return result;
-}
+class $modify(FPCPlayerObject, PlayerObject) {
+    bool pushButton(PlayerButton button) {
+        bool result = PlayerObject::pushButton(button);
+        handleInput(this);
+        return result;
+    }
 
-bool releaseButton(PlayerButton button) {
-    bool result = PlayerObject::releaseButton(button);
-    handleInput(this);
-    return result;
-}
-}
-;
+    bool releaseButton(PlayerButton button) {
+        bool result = PlayerObject::releaseButton(button);
+        handleInput(this);
+        return result;
+    }
+};

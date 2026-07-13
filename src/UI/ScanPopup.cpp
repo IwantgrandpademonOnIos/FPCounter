@@ -6,6 +6,14 @@ using namespace geode::prelude;
 
 namespace fpcounter {
 
+    namespace {
+        ccColor3B tierColor(int requiredFps) {
+            if (requiredFps >= 240) return {255, 90, 90}; // tightest inputs, red
+            if (requiredFps >= 120) return {255, 180, 60}; // orange
+            return {255, 255, 255}; // 60fps baseline, plain white
+        }
+    }
+
     ScanPopup* ScanPopup::create(int prefillLevelId) {
         auto ret = new ScanPopup();
         if (ret && ret->init(prefillLevelId)) {
@@ -17,31 +25,51 @@ namespace fpcounter {
     }
 
     bool ScanPopup::init(int prefillLevelId) {
-        if (!Popup::init(360.f, 260.f)) return false;
+        if (!Popup::init(400.f, 290.f)) return false;
 
         this->setTitle("Frame Perfect Scanner");
 
-        m_idInput = TextInput::create(140.f, "Level ID", "chatFont.fnt");
+        auto inputPanel = CCScale9Sprite::create("GJ_square02.png");
+        inputPanel->setContentSize({360.f, 44.f});
+        inputPanel->setOpacity(90);
+        inputPanel->setPosition({m_size.width / 2.f, m_size.height - 52.f});
+        m_mainLayer->addChild(inputPanel);
+
+        m_idInput = TextInput::create(160.f, "Level ID", "chatFont.fnt");
         m_idInput->setCommonFilter(CommonFilter::Uint);
-        m_idInput->setPosition({m_size.width / 2.f - 40.f, m_size.height - 55.f});
+        m_idInput->setPosition({m_size.width / 2.f - 65.f, m_size.height - 52.f});
         m_mainLayer->addChild(m_idInput);
 
-        auto scanSpr = ButtonSprite::create("Scan", "bigFont.fnt", "GJ_button_01.png", 0.8f);
-        scanSpr->setScale(0.7f);
+        auto scanSpr = ButtonSprite::create("Scan", "bigFont.fnt", "GJ_button_01.png", 0.9f);
+        scanSpr->setScale(0.75f);
         auto scanBtn = CCMenuItemSpriteExtra::create(scanSpr, this, menu_selector(ScanPopup::onScan));
 
         auto menu = CCMenu::create();
         menu->addChild(scanBtn);
-        menu->setPosition({m_size.width / 2.f + 65.f, m_size.height - 55.f});
+        menu->setPosition({m_size.width / 2.f + 95.f, m_size.height - 52.f});
         m_mainLayer->addChild(menu);
 
         m_statusLabel = CCLabelBMFont::create("Enter a level ID and tap Scan.", "chatFont.fnt");
-        m_statusLabel->setScale(0.5f);
-        m_statusLabel->setPosition({m_size.width / 2.f, m_size.height - 90.f});
+        m_statusLabel->setScale(0.55f);
+        m_statusLabel->setPosition({m_size.width / 2.f, m_size.height - 88.f});
         m_mainLayer->addChild(m_statusLabel);
 
-        m_resultsScroll = ScrollLayer::create({m_size.width - 40.f, 130.f});
-        m_resultsScroll->setPosition({20.f, 30.f});
+        auto headerRow =
+            CCLabelBMFont::create("PROGRESS      FPS NEEDED      MARGIN", "chatFont.fnt");
+        headerRow->setScale(0.4f);
+        headerRow->setOpacity(140);
+        headerRow->setAnchorPoint({0.f, 0.5f});
+        headerRow->setPosition({24.f, m_size.height - 112.f});
+        m_mainLayer->addChild(headerRow);
+
+        auto resultsPanel = CCScale9Sprite::create("GJ_square02.png");
+        resultsPanel->setContentSize({360.f, 150.f});
+        resultsPanel->setOpacity(60);
+        resultsPanel->setPosition({m_size.width / 2.f, 90.f});
+        m_mainLayer->addChild(resultsPanel);
+
+        m_resultsScroll = ScrollLayer::create({350.f, 140.f});
+        m_resultsScroll->setPosition({m_size.width / 2.f - 175.f, 20.f});
         m_mainLayer->addChild(m_resultsScroll);
 
         if (prefillLevelId > 0) {
@@ -78,6 +106,7 @@ namespace fpcounter {
                 fmt::format("No recorded clear for level {}. Play through it once with FP Counter enabled first.", levelId)
                     .c_str()
             );
+            m_resultsScroll->m_contentLayer->setContentSize({350.f, 140.f});
             return;
         }
 
@@ -88,23 +117,35 @@ namespace fpcounter {
         )
                                      .c_str());
 
-        float y = 0.f;
+        float y = -6.f;
+        bool alternate = false;
         for (auto const& ev : run->events) {
+            if (alternate) {
+                auto stripe = CCLayerColor::create(ccc4(255, 255, 255, 12));
+                stripe->setContentSize({350.f, 18.f});
+                stripe->setPosition({0.f, y - 15.f});
+                stripe->ignoreAnchorPointForPosition(false);
+                stripe->setAnchorPoint({0.f, 0.f});
+                m_resultsScroll->m_contentLayer->addChild(stripe);
+            }
+            alternate = !alternate;
+
             auto row = CCLabelBMFont::create(
                 fmt::format(
-                    "{:.1f}%  -  needs {} fps  -  {:.1f}px margin", ev.percent, ev.requiredFps, ev.clearance
+                    "{:>5.1f}%          {:>3} fps          {:>5.1f}px", ev.percent, ev.requiredFps, ev.clearance
                 )
                     .c_str(),
                 "chatFont.fnt"
             );
             row->setScale(0.45f);
             row->setAnchorPoint({0.f, 1.f});
-            row->setPosition({4.f, y});
+            row->setPosition({8.f, y});
+            row->setColor(tierColor(ev.requiredFps));
             m_resultsScroll->m_contentLayer->addChild(row);
-            y -= 16.f;
+            y -= 18.f;
         }
 
-        m_resultsScroll->m_contentLayer->setContentSize({m_size.width - 40.f, std::max(130.f, -y)});
+        m_resultsScroll->m_contentLayer->setContentSize({350.f, std::max(140.f, -y)});
     }
 
 } // namespace fpcounter

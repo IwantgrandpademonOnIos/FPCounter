@@ -17,3 +17,4 @@ jobs:
         with:
           clang-format-version: '18'
           check-path: 'src'
+          exclude-regex: 'Hooks\.cpp$'

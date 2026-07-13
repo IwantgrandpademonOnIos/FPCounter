@@ -7,7 +7,7 @@ Geode mod for Geometry Dash 2.2081. Detects genuine frame-perfect inputs live, n
 
 ## Features
 
-1. **Live detection** - on every push/release, checks the clearance between your hitbox and the nearest collision block against how far you move in one 240Hz physics tick. If the clearance is tighter than the "Loosest FPS Still Counted" setting allows (default 60fps), it counts as a frame perfect.
+1. **Live detection** - on every push/release, checks the clearance between your hitbox and the nearest hazard/solid hitbox against how far you move in one physics tick, at whatever tick rate the current attempt is actually running at (so this works under macros and TPS-changing mods, not just stock 240 TPS play). If the clearance is tighter than the "Loosest FPS Still Counted" setting allows (default 60fps), it counts as a frame perfect.
 2. **Screen flash** - tints the screen a color (default green) on each detected frame perfect. Color and fade duration are configurable.
 3. **Sound** - plays a sound on each frame perfect. Enable/disable independently of the flash, and pick any audio file from your device (no bundled sound - see Settings).
 4. **On-screen counter** - running total for the current attempt, top-right corner.
@@ -25,12 +25,21 @@ So "scan the level" really means "show me the analysis from the last time I beat
 
 ## Detection accuracy
 
-The clearance-vs-displacement check is a geometric approximation, not a bit-exact reimplementation of GD's physics. Two constants you'll likely want to tune against real gameplay:
+The clearance-vs-displacement check is a geometric approximation, not a bit-exact reimplementation of GD's physics.
 
-- `kPhysicsTickRate` in `FPDetector.cpp` (240.0, matches GD's fixed post-2.2 tick rate - shouldn't need changing)
+**v1.1.0 fixes two real bugs found from a macro test on Acheron returning 0:**
+- Detection was checking `GJBaseGameLayer::m_collisionBlocks`, which is a niche editor trigger feature (invisible collision-trigger volumes), not hazard geometry - almost never populated on a normal level. It now checks `m_hazardCollisionObjects` and `m_solidCollisionObjects`, the arrays GD itself maintains for "things that can kill or block the player."
+- The tick rate was hardcoded to 240. GD doesn't always simulate at a fixed 240 TPS - the real tick length matches whatever rate the current attempt is running at, which macros and TPS-changing mods can set to anything. `GJBaseGameLayerHooks.cpp` now hooks `getModifiedDelta` to capture the real per-tick dt every tick (`TickContext`), and `FPDetector` uses that instead of a constant. This was the main reason a macro produced a flat 0 count: it was almost certainly playing back at something other than 240 TPS, so "one tick of movement" was computed at the wrong scale.
+
+One constant you'll likely still want to tune against real gameplay:
+
 - `kLookaheadPx` / `kLookbehindPx` in `FPDetector.cpp` - the window used to find "the nearest relevant object." Too small and it'll miss obstacles at high speed (wave, dash rings); too large and it'll pick up irrelevant background objects.
 
 Rotated hitboxes (diagonal spikes, angled blocks) are checked as axis-aligned rects via `getObjectRect()`, not the oriented box (`getOrientedBox()` exists on `GameObject` if you want to upgrade this later). Expect some false positives/negatives on heavily rotated geometry until that's added.
+
+## On the missing settings tab
+
+I audited every entry in `mod.json`'s `settings` block line-by-line against the actual parsing code in `ModSettingsManager.cpp`/`SettingV3.cpp` from the SDK you provided (every type used - `title`, `bool`, `rgb`, `float`, `int`, `file` - is registered, and every key matches what each type's `parse()` function actually reads, down to the `{r,g,b}` color object shape and the `filters`/`dialog` file-control schema). I could not find a schema violation that would explain the settings tab not rendering. If it's still missing after this update, it's worth checking Geode's own log console (there's usually a warning printed there if a specific setting fails to parse) - that would narrow it down faster than me guessing further.
 
 ## Known limitations
 
@@ -50,8 +59,8 @@ Output `.geode` file goes to `build/FPCounter.geode` (or wherever your Geode CLI
 
 ## CI
 
-- **Build** (`.github/workflows/build.yml`) - builds Windows, macOS, Android32, and Android64 on every push/PR to `main`, combines them into one `.geode`, uploads it as a workflow artifact.
-- **Lint** (`.github/workflows/lint.yml`) - checks `src/` against `.clang-format` on every push/PR to `main`.
+- **Build** (`.github/workflows/build.yml`) - builds Windows, macOS, Android32, and Android64 on every commit to any branch, combines them into one `.geode`, uploads it as a workflow artifact.
+- **Lint** (`.github/workflows/lint.yml`) - checks `src/` against `.clang-format` on every commit to any branch, except files named `*Hooks.cpp`. clang-format doesn't understand Geode's `$modify(...)` macro and reformats those class bodies into an unreadable mess, so those specific files are hand-formatted instead and excluded from the check (`exclude-regex: 'Hooks\.cpp$'`).
 - **Release** (`.github/workflows/release.yml`) - manual only (`workflow_dispatch`, run it from the Actions tab). Builds every platform, combines them, and publishes a GitHub Release tagged with whatever `version` is currently in `mod.json`. Bump the version before running it - Geode's own docs are explicit that you should never overwrite an existing release, since the package is checksummed.
 
 ## Settings
