@@ -11,6 +11,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Debug the API installer endpoint
       - name: Debug API Installer
         run: |
           echo "Downloading API installer..."
@@ -18,9 +19,14 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt
 
-      - name: Install Geode CLI
+      # Manual undocumented Geode CLI install (the only working method)
+      - name: Install Geode CLI (Manual)
         run: |
-          curl -fsSL https://geode-sdk.org/api/install | bash
+          echo "Cloning Geode repository..."
+          git clone https://github.com/geode-sdk/geode.git
+          cd geode
+          echo "Running Geode installer script..."
+          ./install.sh
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "$HOME/.geode/bin" >> $GITHUB_PATH
           echo "$HOME/.local/share/geode/bin" >> $GITHUB_PATH
