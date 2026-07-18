@@ -19,18 +19,19 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      # Manual undocumented Geode CLI install (the only working method)
-      - name: Install Geode CLI (Manual)
+      # Build Geode CLI from source (the real working method)
+      - name: Install Geode CLI (Build from Source)
         run: |
-          echo "Cloning Geode repository..."
+          echo "Cloning Geode CLI..."
           git clone https://github.com/geode-sdk/geode.git
-          cd geode
-          echo "Running Geode installer script..."
-          ./install.sh
+          cd geode/cli
+          echo "Building Geode CLI..."
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+          echo "Installing Geode CLI..."
+          mkdir -p $HOME/.local/bin
+          cp build/geode $HOME/.local/bin/geode
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          echo "$HOME/.geode/bin" >> $GITHUB_PATH
-          echo "$HOME/.local/share/geode/bin" >> $GITHUB_PATH
-          echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Verify Geode CLI
         run: geode --version
