@@ -1,63 +1,38 @@
-name: Build
+name: Build FPCounter
 
 on:
-  push:
-    branches: ["**"]
   workflow_dispatch:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
+
     strategy:
-      fail-fast: false
       matrix:
         config:
-          - name: Windows
-            os: windows-latest
-            target: windows
-            platform: windows
-
-          - name: macOS
-            os: macos-latest
-            target: macos
-            platform: macos
-
-          - name: iOS
-            os: macos-latest
-            target: ios
-            platform: ios
-
-          - name: Android32
-            os: ubuntu-latest
-            target: Android32
-            platform: Android32
-
-          - name: Android64
-            os: ubuntu-latest
-            target: Android64
-            platform: Android64
-
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+          - { target: windows,   platform: windows }
+          - { target: macos,     platform: macos }
+          - { target: ios,       platform: ios }
+          - { target: android32, platform: android32 }
+          - { target: android64, platform: android64 }
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Build the mod
-        uses: geode-sdk/build-geode-mod@v1
+      - name: Install Geode SDK
+        run: |
+          curl -fsSL https://geode-sdk.org/install.sh | bash
+
+      - name: Build mod using CLI
+        run: |
+          geode build \
+            --target ${{ matrix.config.target }} \
+            --platform ${{ matrix.config.platform }} \
+            --combine
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          combine: true
-          target: ${{ matrix.config.target }}
-          platforms: ${{ matrix.config.platform }}
-
-  package:
-    name: Package builds
-    runs-on: ubuntu-latest
-    needs: ['build']
-    steps:
-      - uses: geode-sdk/build-geode-mod/combine@v1
-        id: build
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: FPCounter
-          path: ${{ steps.build.outputs.build-output }}
+          name: FPCounter-${{ matrix.config.platform }}
+          path: build/*
