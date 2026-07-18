@@ -11,7 +11,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Debug API Installer (but don't fail the job)
+      # Debug API Installer (still harmless)
       - name: Debug API Installer
         run: |
           echo "Downloading API installer..."
@@ -19,18 +19,17 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      # Build Geode CLI from the public SDK repo
-      - name: Install Geode CLI (Build from Source)
+      # Install Geode CLI from official SDK release
+      - name: Install Geode CLI (SDK Binary)
         run: |
-          echo "Cloning Geode SDK..."
-          git clone https://github.com/geode-sdk/geode.git
-          cd geode/geode-cli
-          echo "Building Geode CLI..."
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --config Release
+          echo "Downloading Geode SDK..."
+          curl -L https://github.com/geode-sdk/geode/releases/latest/download/geode-sdk-macos.zip -o geode-sdk.zip
+          echo "Extracting SDK..."
+          unzip geode-sdk.zip -d geode-sdk
           echo "Installing Geode CLI..."
           mkdir -p $HOME/.local/bin
-          cp build/geode $HOME/.local/bin/geode
+          cp geode-sdk/bin/geode $HOME/.local/bin/geode
+          chmod +x $HOME/.local/bin/geode
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Verify Geode CLI
