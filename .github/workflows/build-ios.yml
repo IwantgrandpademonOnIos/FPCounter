@@ -18,16 +18,10 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      - name: Download Geode SDK (Auto-detect correct asset)
+      - name: Download Geode SDK (CDN)
         run: |
-          echo "Fetching release metadata..."
-          curl -s https://api.github.com/repos/geode-sdk/geode/releases/latest > release.json
-
-          echo "Finding macOS SDK asset..."
-          SDK_URL=$(cat release.json | grep browser_download_url | grep macos | cut -d '"' -f 4)
-
-          echo "Downloading SDK from: $SDK_URL"
-          curl -L "$SDK_URL" -o geode-sdk.zip
+          echo "Downloading Geode SDK from CDN..."
+          curl -L https://geode-sdk.org/download/sdk/macos -o geode-sdk.zip
 
       - name: Install Geode CLI (SDK Binary)
         run: |
