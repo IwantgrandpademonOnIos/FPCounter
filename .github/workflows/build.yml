@@ -17,6 +17,10 @@ jobs:
           - name: macOS
             os: macos-latest
 
+          - name: ios
+            os: macos-latest
+            target: ios
+
           - name: Android32
             os: ubuntu-latest
             target: Android32
@@ -24,10 +28,6 @@ jobs:
           - name: Android64
             os: ubuntu-latest
             target: Android64
-
-          - name: ios
-            os: macos-latest
-            target: ios
             
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
