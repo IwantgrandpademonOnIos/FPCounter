@@ -13,7 +13,7 @@ jobs:
 
       - name: Download Geode Installer
         run: |
-          curl -fsSL https://geode-sdk.org/install.sh -o geode-install.sh
+          curl -fsSL https://geode-sdk.org/install -o geode-install.sh
           chmod +x geode-install.sh
 
       - name: Run Geode Installer (Verbose)
