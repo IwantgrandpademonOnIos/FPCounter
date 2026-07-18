@@ -13,21 +13,28 @@ jobs:
         config:
           - name: Windows
             os: windows-latest
+            target: windows
+            platform: windows
 
           - name: macOS
             os: macos-latest
+            target: macos
+            platform: macos
 
           - name: ios
             os: macos-latest
             target: ios
+            platform: ios
 
           - name: Android32
             os: ubuntu-latest
             target: Android32
+            platform: Android32
 
           - name: Android64
             os: ubuntu-latest
             target: Android64
+            platfrom: Android64
             
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
