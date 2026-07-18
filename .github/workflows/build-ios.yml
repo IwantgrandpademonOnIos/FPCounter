@@ -11,13 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Debug the API installer endpoint
+      # Debug API Installer (but don't fail the job)
       - name: Debug API Installer
         run: |
           echo "Downloading API installer..."
-          curl -fsSL https://geode-sdk.org/api/install -o api_installer.txt
+          curl -fsSL https://geode-sdk.org/api/install -o api_installer.txt || true
           echo "First 20 lines of API installer:"
-          head -n 20 api_installer.txt
+          head -n 20 api_installer.txt || true
 
       # Manual undocumented Geode CLI install (the only working method)
       - name: Install Geode CLI (Manual)
