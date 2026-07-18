@@ -8,12 +8,12 @@
  },
 
     "platforms": [
-  "windows",
-  "macos",
-  "ios",
-  "android32",
-  "android64"
-]
+      "windows",
+      "macos",
+      "ios",
+      "android32",
+      "android64"
+ ]
 
     "id": "ssmg4.fp-counter",
     "name": "FP Counter",
