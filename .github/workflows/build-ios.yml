@@ -1,0 +1,29 @@
+name: Build iOS Mod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Geode CLI
+        run: |
+          curl -fsSL https://geode-sdk.org/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify Geode CLI
+        run: geode --version
+
+      - name: Build iOS mod
+        run: geode build --platform ios --target ios --combine
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/*
