@@ -11,7 +11,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Debug API Installer (still harmless)
       - name: Debug API Installer
         run: |
           echo "Downloading API installer..."
@@ -19,13 +18,22 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      # Install Geode CLI from official SDK release
+      - name: Download Geode SDK (Auto-detect correct asset)
+        run: |
+          echo "Fetching release metadata..."
+          curl -s https://api.github.com/repos/geode-sdk/geode/releases/latest > release.json
+
+          echo "Finding macOS SDK asset..."
+          SDK_URL=$(cat release.json | grep browser_download_url | grep macos | cut -d '"' -f 4)
+
+          echo "Downloading SDK from: $SDK_URL"
+          curl -L "$SDK_URL" -o geode-sdk.zip
+
       - name: Install Geode CLI (SDK Binary)
         run: |
-          echo "Downloading Geode SDK..."
-          curl -L https://github.com/geode-sdk/geode/releases/latest/download/geode-sdk-macos.zip -o geode-sdk.zip
           echo "Extracting SDK..."
           unzip geode-sdk.zip -d geode-sdk
+
           echo "Installing Geode CLI..."
           mkdir -p $HOME/.local/bin
           cp geode-sdk/bin/geode $HOME/.local/bin/geode
