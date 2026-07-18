@@ -11,6 +11,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug API Installer
+        run: |
+          echo "Downloading API installer..."
+          curl -fsSL https://geode-sdk.org/api/install -o api_installer.txt
+          echo "First 20 lines of API installer:"
+          head -n 20 api_installer.txt
+
       - name: Install Geode CLI
         run: |
           curl -fsSL https://geode-sdk.org/api/install | bash
