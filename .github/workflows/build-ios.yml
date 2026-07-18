@@ -11,9 +11,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Geode CLI
+      - name: Download Installer (Debug)
         run: |
-          curl -fsSL https://geode-sdk.org/install | bash
+          echo "Downloading installer..."
+          curl -fsSL https://geode-sdk.org/install -o installer.txt
+          echo "First 20 lines of installer:"
+          head -n 20 installer.txt
+
+      - name: Try Running Installer
+        run: |
+          echo "Attempting to run installer..."
+          bash installer.txt || true
+
+      - name: Locate Geode CLI
+        run: |
+          echo "Searching for geode binary..."
+          find /Users/runner -type f -name geode -print
+          find /usr/local -type f -name geode -print
+          find $HOME -type f -name geode -print
+
+      - name: Add Geode CLI to PATH
+        run: |
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "$HOME/.geode/bin" >> $GITHUB_PATH
           echo "$HOME/.local/share/geode/bin" >> $GITHUB_PATH
