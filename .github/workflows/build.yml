@@ -47,7 +47,6 @@ jobs:
         with:
           combine: true
           target: ${{ matrix.config.target }}
-          platform: ${{ matrix.config.target }}
 
 
   package:
