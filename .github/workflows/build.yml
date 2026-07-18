@@ -23,8 +23,13 @@ jobs:
       - name: Install Geode SDK
         run: |
           curl -fsSL https://geode-sdk.org/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "$HOME/.local/share/geode/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Manually install Geode CLI
+        run: |
+          cp "$HOME/.local/share/geode/bin/geode" "$HOME/.local/bin/geode"
+          chmod +x "$HOME/.local/bin/geode"
 
       - name: Verify Geode CLI
         run: geode --version
