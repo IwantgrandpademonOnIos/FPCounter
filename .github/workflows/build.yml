@@ -20,10 +20,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download Geode CLI
+      - name: Install Geode CLI
         run: |
           GEODE_VERSION="5.8.2"
-          curl -L "https://github.com/geode-sdk/geode/releases/download/v${GEODE_VERSION}/geode-linux" -o geode
+          curl -L "https://github.com/geode-sdk/geode/releases/download/v${GEODE_VERSION}/geode-linux-x64" -o geode
           chmod +x geode
           sudo mv geode /usr/local/bin/geode
 
