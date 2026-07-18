@@ -18,10 +18,10 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      - name: Download Geode SDK (CDN)
+      - name: Download Geode SDK (Correct Endpoint)
         run: |
-          echo "Downloading Geode SDK from CDN..."
-          curl -L https://geode-sdk.org/download/sdk/macos -o geode-sdk.zip
+          echo "Downloading Geode SDK..."
+          curl -L "https://geode-sdk.org/download/sdk?platform=macos" -o geode-sdk.zip
 
       - name: Install Geode CLI (SDK Binary)
         run: |
