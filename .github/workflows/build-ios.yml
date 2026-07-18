@@ -18,19 +18,16 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      - name: Download Geode SDK (Correct Endpoint)
+      - name: Download Geode CLI (macOS)
         run: |
-          echo "Downloading Geode SDK..."
-          curl -L "https://geode-sdk.org/download/sdk?platform=macos" -o geode-sdk.zip
+          echo "Downloading Geode CLI..."
+          curl -L "https://geode-sdk.org/download/cli?platform=macos" -o geode-cli
 
-      - name: Install Geode CLI (SDK Binary)
+      - name: Install Geode CLI
         run: |
-          echo "Extracting SDK..."
-          unzip geode-sdk.zip -d geode-sdk
-
           echo "Installing Geode CLI..."
           mkdir -p $HOME/.local/bin
-          cp geode-sdk/bin/geode $HOME/.local/bin/geode
+          cp geode-cli $HOME/.local/bin/geode
           chmod +x $HOME/.local/bin/geode
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
