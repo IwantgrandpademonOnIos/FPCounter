@@ -21,7 +21,7 @@ jobs:
             target: macos
             platform: macos
 
-          - name: ios
+          - name: iOS
             os: macos-latest
             target: ios
             platform: ios
@@ -35,7 +35,7 @@ jobs:
             os: ubuntu-latest
             target: Android64
             platform: Android64
-            
+
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
 
@@ -48,6 +48,7 @@ jobs:
           combine: true
           target: ${{ matrix.config.target }}
           platform: ${{ matrix.config.platform }}
+
 
   package:
     name: Package builds
