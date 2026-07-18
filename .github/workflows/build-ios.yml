@@ -19,12 +19,12 @@ jobs:
           echo "First 20 lines of API installer:"
           head -n 20 api_installer.txt || true
 
-      # Build Geode CLI from source (the real working method)
+      # Build Geode CLI from the correct repo
       - name: Install Geode CLI (Build from Source)
         run: |
           echo "Cloning Geode CLI..."
-          git clone https://github.com/geode-sdk/geode.git
-          cd geode/cli
+          git clone https://github.com/geode-sdk/geode-cli.git
+          cd geode-cli
           echo "Building Geode CLI..."
           cmake -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release
