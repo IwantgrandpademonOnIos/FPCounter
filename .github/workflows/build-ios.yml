@@ -14,7 +14,17 @@ jobs:
       - name: Install Geode CLI
         run: |
           curl -fsSL https://geode-sdk.org/install.sh | bash
+
+      - name: Locate Geode CLI
+        run: |
+          echo "Searching for geode binary..."
+          find $HOME -type f -name geode -print
+
+      - name: Add Geode CLI to PATH
+        run: |
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$HOME/.geode/bin" >> $GITHUB_PATH
+          echo "$HOME/.local/share/geode/bin" >> $GITHUB_PATH
 
       - name: Verify Geode CLI
         run: geode --version
